@@ -1,0 +1,22 @@
+{
+  "name": "urlshortener_api",
+  "version": "1.0.0",
+  "description": "url shortener api for freecodecamp",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theogoulart/url-shortener-api.git"
+  },
+  "author": "theogoulart",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/theogoulart/url-shortener-api/issues"
+  },
+  "homepage": "https://github.com/theogoulart/url-shortener-api#readme",
+  "dependencies": {
+    "express": "^4.15.2"
+  }
+}
