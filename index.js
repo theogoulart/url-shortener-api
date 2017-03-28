@@ -1,6 +1,5 @@
 var express = require('express')
 var mongo = require('mongodb').MongoClient
-var url = require('url')
 
 var app = express()
 
@@ -17,15 +16,37 @@ app.get('/new/*', function(req, res){
         var regex = /^((ftp|http|https):\/\/)?www\.([A-z]+)\.([A-z]{2,})/
         var result = {}
         
-        
         if(regex.test(req.params[0])){
-            result.original_url = req.params[0]
-            result.short_url = ""
+            
+            var urls = db.collection("urls")
+            var param = req.params[0]
+            
+            urls.findOne({
+                url: param
+            }, function(err, doc){
+                if(err) throw err
+                
+                if(doc){
+                    result.original_url = param
+                    res.status(200).send(JSON.stringify(result))
+                } else {
+                    urls.insert({
+                        url: param
+                    }, function(err, data){
+                        if(err) throw err
+                        
+                        var id = data.ops[0]._id
+                        result.original_url = param
+                        res.status(200).send(JSON.stringify(result))
+                    })
+                }
+                db.close()
+            })
+            
         } else {
             result.error = "Wrong url format, make sure you have a valid protocol and real site."
+            res.status(200).send(JSON.stringify(result))
         }
-        
-        res.status(200).send(JSON.stringify(result))
         
     })
 })
