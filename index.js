@@ -4,11 +4,40 @@ var mongo = require('mongodb').MongoClient
 var app = express()
 var dbURL = 'mongodb://localhost:27017/local'
 
+app.get('/:id', function(req, res){
+    mongo.connect(dbURL, function(err, db) {
+        if(err){ 
+            res.status(500).send("unable to connect to db")
+            throw err
+        }
+        
+        var urls = db.collection('urls')
+        
+        urls.findOne({
+            short: Number(req.params.id)
+        }, function(err, doc){
+            if(err) throw err
+            
+            if(doc){
+                res.writeHead(302,
+                  {Location: doc.url}
+                );
+            } else {
+                res.status(500).send("short url not found")
+            }
+            res.end();
+            db.close()
+        })
+    })
+    
+})
+
+
 app.get('/new/*', function(req, res){
     
     mongo.connect(dbURL,function(err, db){
         if(err){ 
-            res.status(503).send("unable to connect")
+            res.status(500).send("unable to connect to db")
             throw err
         }
         
