@@ -41,7 +41,7 @@ app.get('/new/*', function(req, res){
             throw err
         }
         
-        var regex = /^((ftp|http|https):\/\/)?www\.([A-z]+)\.([A-z]{2,})/
+        var regex = /^((ftp|http|https):\/\/)www\.([A-z]+)\.([A-z]{2,})/
         var result = {}
         
         if(regex.test(req.params[0])){
