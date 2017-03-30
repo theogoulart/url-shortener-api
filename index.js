@@ -2,7 +2,7 @@ var express = require('express')
 var mongo = require('mongodb').MongoClient
 
 var app = express()
-var dbURL = 'mongodb://localhost:27017/local'
+var dbURL = process.env.MONGOLAB_URI
 
 app.get('/:id', function(req, res){
     mongo.connect(dbURL, function(err, db) {
@@ -25,8 +25,8 @@ app.get('/:id', function(req, res){
             } else {
                 res.status(500).send("short url not found")
             }
-            res.end();
             db.close()
+            res.end();
         })
     })
     
@@ -82,6 +82,7 @@ app.get('/new/*', function(req, res){
         } else {
             result.error = "Wrong url format, make sure you have a valid protocol and real site."
             res.status(200).send(JSON.stringify(result))
+            db.close()
         }
         
     })
