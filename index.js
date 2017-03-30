@@ -2,7 +2,6 @@ var express = require('express')
 var mongo = require('mongodb').MongoClient
 
 var app = express()
-
 var dbURL = 'mongodb://localhost:27017/local'
 
 app.get('/new/*', function(req, res){
@@ -20,6 +19,8 @@ app.get('/new/*', function(req, res){
             
             var urls = db.collection("urls")
             var param = req.params[0]
+            var apiUrl = "https://"+ req.get('host') + "/"
+            var key = Math.floor(Math.random() * 90000 + 10000)
             
             urls.findOne({
                 url: param
@@ -27,20 +28,26 @@ app.get('/new/*', function(req, res){
                 if(err) throw err
                 
                 if(doc){
-                    result.original_url = param
+                    result.original_url = doc.url
+                    result.short_url    = apiUrl+doc.short
+                    
                     res.status(200).send(JSON.stringify(result))
+                    db.close()
                 } else {
                     urls.insert({
-                        url: param
+                        url: param,
+                        short: key
                     }, function(err, data){
                         if(err) throw err
                         
-                        var id = data.ops[0]._id
-                        result.original_url = param
+                        var inserted        = data.ops[0]
+                        result.original_url = inserted.url
+                        result.short_url    = apiUrl+inserted.short
+                        
                         res.status(200).send(JSON.stringify(result))
+                        db.close()
                     })
                 }
-                db.close()
             })
             
         } else {
